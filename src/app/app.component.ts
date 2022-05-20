@@ -1,5 +1,4 @@
-import { AfterViewInit, Component, Inject, OnInit } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-root',
