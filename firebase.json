@@ -1,0 +1,10 @@
+{
+  "hosting": {
+    "public": "dist/mfa-validation",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}

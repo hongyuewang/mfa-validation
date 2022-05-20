@@ -70,4 +70,26 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {}
+
+  async onClickSubmit(formData: any) {
+    let validationCode = "";
+
+    Object.values(formData).forEach((digit: any) => {validationCode += digit});
+
+    const response = fetch(
+      'https://cors-anywhere.herokuapp.com/https://coop-interview.outstem.io/validate',
+      {
+        mode: 'cors',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({code: validationCode}),
+      }
+    );
+
+    const validBoolean = await response.then((value) => value.json()).then((value) => value.valid);
+
+    
+  }
 }

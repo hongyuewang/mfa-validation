@@ -8,7 +8,7 @@
   </head>
   <body>
     <h1>Enter Your Validation Code</h1>
-    <form class="otc" name="one-time-code" action="#">
+    <form class="otc" name="one-time-code" action="#" #validationForm="ngForm" (ngSubmit)="onClickSubmit(validationForm.value)">
       <fieldset>
         <input
           class="text-center form-control rounded"
@@ -19,8 +19,10 @@
           maxlength="1"
           value=""
           inputtype="numeric"
+          name="otc-1"
           id="otc-1"
           required
+          ngModel
         />
         <input
           class="text-center form-control rounded"
@@ -31,8 +33,10 @@
           maxlength="1"
           value=""
           inputtype="numeric"
+          name="otc-2"
           id="otc-2"
           required
+          ngModel
         />
         <input
           class="text-center form-control rounded"
@@ -43,8 +47,10 @@
           maxlength="1"
           value=""
           inputtype="numeric"
+          name="otc-3"
           id="otc-3"
           required
+          ngModel
         />
         <input
           class="text-center form-control rounded"
@@ -55,8 +61,10 @@
           maxlength="1"
           value=""
           inputtype="numeric"
+          name="otc-4"
           id="otc-4"
           required
+          ngModel
         />
         <input
           class="text-center form-control rounded"
@@ -67,8 +75,10 @@
           maxlength="1"
           value=""
           inputtype="numeric"
+          name="otc-5"
           id="otc-5"
           required
+          ngModel
         />
         <input
           class="text-center form-control rounded"
@@ -79,8 +89,10 @@
           maxlength="1"
           value=""
           inputtype="numeric"
+          name="otc-6"
           id="otc-6"
           required
+          ngModel
         />
       </fieldset>
       <div class="row justify-content-center">
