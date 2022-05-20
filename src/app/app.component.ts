@@ -11,7 +11,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   splitNumber(event: any) {
     let data = event.target.value;
 
-    // make sure it's a case of copy+paste
+    // make sure it's a case of copy/paste
     if (data.length > 1) {
       this.fillNext(event.target, data);
     }
@@ -33,7 +33,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     const input1 = document.getElementById('otc-1') as HTMLElement;
     const inputs = document.querySelectorAll('input[type="number"]');
-    console.log(input1);
     inputs.forEach((input: any) => {
       input.addEventListener('keyup', (event: any) => {
         // break on shift, tab, cmd, option or control
