@@ -1,4 +1,5 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-root',
@@ -7,6 +8,9 @@ import { AfterViewInit, Component, OnInit } from '@angular/core';
 })
 export class AppComponent implements OnInit, AfterViewInit {
   title = 'mfa-validation';
+  validInputCount: any = 0;
+  validBoolean: boolean | undefined = undefined;
+  validHeader: string = "";
 
   splitNumber(event: any) {
     let data = event.target.value;
@@ -28,11 +32,14 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
-  constructor() {}
+  @ViewChild('askApprovalModal')
+  askApprovalElementRef!: ElementRef;
+  constructor(private modalService: NgbModal) {}
 
   ngOnInit(): void {
     const input1 = document.getElementById('otc-1') as HTMLElement;
     const inputs = document.querySelectorAll('input[type="number"]');
+    const form = document.getElementById('otc') as HTMLElement;
     inputs.forEach((input: any) => {
       input.addEventListener('keyup', (event: any) => {
         // break on shift, tab, cmd, option or control
@@ -60,12 +67,26 @@ export class AppComponent implements OnInit, AfterViewInit {
         if (event.target.value.length > 1) {
           this.splitNumber(event);
         }
+
       });
+
+      input.addEventListener('input', (event: any) => {
+        if (input.value.length === 1) {
+          this.validInputCount += true;
+        } else {
+          this.validInputCount += false;
+        }
+      });
+
     });
 
     // handle copy/paste
     input1.addEventListener('input', (event: any) => {
       this.splitNumber(event);
+    });
+
+    form.addEventListener('change', (event: any) => {
+      
     });
   }
 
@@ -77,7 +98,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     Object.values(formData).forEach((digit: any) => {validationCode += digit});
 
     const response = fetch(
-      'https://cors-anywhere.herokuapp.com/https://coop-interview.outstem.io/validate',
+      'https://wang-cors-anywhere.herokuapp.com/https://coop-interview.outstem.io/validate',
       {
         mode: 'cors',
         method: 'POST',
@@ -88,8 +109,26 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     );
 
-    const validBoolean = await response.then((value) => value.json()).then((value) => value.valid);
-
+    this.validBoolean = await response.then((response) => {if (response.ok) {return response} else {throw new Error("Something went wrong.");}}).then((value) => value.json()).then((value) => {this.validHeader = (value.valid? "Your code is valid." : "Your code is invalid."); return value.valid}).catch(async (error) => {
+      this.validHeader = "Error " + await response.then((response) => String(response.status))
+      console.log("Request failed", error);
+    });
     
+    this.open(this.askApprovalElementRef); 
+    
+  }
+
+  open(content: any) {
+    this.modalService.open(content);
+  }
+
+  validationMessage(bool: boolean | undefined): string {
+    if (bool === true) {
+      return "You have been successfully authenticated.";
+    } else if (bool === false) {
+      return "Please try again.";
+    } else {
+      return "Something went wrong. Please try again later.";
+    }
   }
 }
