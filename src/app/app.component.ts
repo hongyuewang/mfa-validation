@@ -119,7 +119,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ code: validationCode.slice(0,6) }),
+        body: JSON.stringify({ code: validationCode.slice(0, 6) }),
       }
     );
 
