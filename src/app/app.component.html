@@ -14,7 +14,7 @@
       name="one-time-code"
       action="#"
       #validationForm="ngForm"
-      (ngSubmit)="onClickSubmit(validationForm.value)"
+      (ngSubmit)="onClickSubmit(validationForm)"
     >
       <fieldset>
         <input
@@ -103,26 +103,32 @@
         />
       </fieldset>
       <div class="row justify-content-center">
-        <button type="submit" class="btn btn-dark btn-lg" [disabled]="!validationForm.valid">Submit</button>
+        <button
+          type="submit"
+          class="btn btn-dark btn-lg"
+          [disabled]="!isSubmissionValid"
+        >
+          Submit
+        </button>
       </div>
     </form>
 
     <!-- Modal -->
-    <ng-template
-      class="modal fade"
-      #askApprovalModal
-      let-modal
-    >
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">{{validHeader}}</h5>
-            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">{{validationMessage(validBoolean)}}</div>
+    <ng-template class="modal fade" #askApprovalModal let-modal>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">{{ validHeader }}</h5>
+          <button
+            type="button"
+            class="close"
+            aria-label="Close"
+            (click)="modal.dismiss('Cross click')"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
+        <div class="modal-body">{{ validationMessage(validBoolean) }}</div>
+      </div>
     </ng-template>
-    
   </body>
 </html>

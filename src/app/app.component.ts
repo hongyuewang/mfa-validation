@@ -1,4 +1,10 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -8,9 +14,9 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class AppComponent implements OnInit, AfterViewInit {
   title = 'mfa-validation';
-  validInputCount: any = 0;
+  isSubmissionValid: boolean = false;
   validBoolean: boolean | undefined = undefined;
-  validHeader: string = "";
+  validHeader: string = '';
 
   splitNumber(event: any) {
     let data = event.target.value;
@@ -37,7 +43,12 @@ export class AppComponent implements OnInit, AfterViewInit {
   constructor(private modalService: NgbModal) {}
 
   ngOnInit(): void {
-    const input1 = document.getElementById('otc-1') as HTMLElement;
+    const input1 = document.getElementById('otc-1') as HTMLInputElement;
+    const input2 = document.getElementById('otc-2') as HTMLInputElement;
+    const input3 = document.getElementById('otc-3') as HTMLInputElement;
+    const input4 = document.getElementById('otc-4') as HTMLInputElement;
+    const input5 = document.getElementById('otc-5') as HTMLInputElement;
+    const input6 = document.getElementById('otc-6') as HTMLInputElement;
     const inputs = document.querySelectorAll('input[type="number"]');
     const form = document.getElementById('otc') as HTMLElement;
     inputs.forEach((input: any) => {
@@ -67,17 +78,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         if (event.target.value.length > 1) {
           this.splitNumber(event);
         }
-
       });
-
-      input.addEventListener('input', (event: any) => {
-        if (input.value.length === 1) {
-          this.validInputCount += true;
-        } else {
-          this.validInputCount += false;
-        }
-      });
-
     });
 
     // handle copy/paste
@@ -85,17 +86,30 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.splitNumber(event);
     });
 
-    form.addEventListener('change', (event: any) => {
-      
+    form.addEventListener('keyup', (event: any) => {
+      if (
+        input1.value.length === 1 &&
+        input2.value.length === 1 &&
+        input3.value.length === 1 &&
+        input4.value.length === 1 &&
+        input5.value.length === 1 &&
+        input6.value.length === 1
+      ) {
+        this.isSubmissionValid = true;
+      } else {
+        this.isSubmissionValid = false;
+      }
     });
   }
 
   ngAfterViewInit(): void {}
 
-  async onClickSubmit(formData: any) {
-    let validationCode = "";
+  async onClickSubmit(form: any) {
+    let validationCode = '';
 
-    Object.values(formData).forEach((digit: any) => {validationCode += digit});
+    Object.values(form.value).forEach((digit: any) => {
+      validationCode += digit;
+    });
 
     const response = fetch(
       'https://wang-cors-anywhere.herokuapp.com/https://coop-interview.outstem.io/validate',
@@ -103,19 +117,37 @@ export class AppComponent implements OnInit, AfterViewInit {
         mode: 'cors',
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({code: validationCode}),
+        body: JSON.stringify({ code: validationCode.slice(0,6) }),
       }
     );
 
-    this.validBoolean = await response.then((response) => {if (response.ok) {return response} else {throw new Error("Something went wrong.");}}).then((value) => value.json()).then((value) => {this.validHeader = (value.valid? "Your code is valid." : "Your code is invalid."); return value.valid}).catch(async (error) => {
-      this.validHeader = "Error " + await response.then((response) => String(response.status))
-      console.log("Request failed", error);
-    });
-    
-    this.open(this.askApprovalElementRef); 
-    
+    this.validBoolean = await response
+      .then((response) => {
+        if (response.ok) {
+          return response;
+        } else {
+          throw new Error('Something went wrong.');
+        }
+      })
+      .then((value) => value.json())
+      .then((value) => {
+        this.validHeader = value.valid
+          ? 'Your code is valid.'
+          : 'Your code is invalid.';
+        return value.valid;
+      })
+      .catch(async (error) => {
+        this.validHeader =
+          'Error ' +
+          (await response.then((response) => String(response.status)));
+        console.log('Request failed', error);
+      });
+
+    this.open(this.askApprovalElementRef);
+    form.resetForm();
+    this.isSubmissionValid = false;
   }
 
   open(content: any) {
@@ -124,11 +156,11 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   validationMessage(bool: boolean | undefined): string {
     if (bool === true) {
-      return "You have been successfully authenticated.";
+      return 'You have been successfully authenticated.';
     } else if (bool === false) {
-      return "Please try again.";
+      return 'Please try again.';
     } else {
-      return "Something went wrong. Please try again later.";
+      return 'Something went wrong. Please try again later.';
     }
   }
 }
